@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using CricketScorer.Extensions;
@@ -22,6 +23,7 @@ namespace CricketScorer
             get => _proposedBall;
             set
             {
+                if (value == _proposedBall) return;
                 _proposedBall = value;
                 OnPropertyChanged();
             }
@@ -33,6 +35,7 @@ namespace CricketScorer
             get => _currentMatch;
             set
             {
+                if (value == _currentMatch) return;
                 _currentMatch = value;
                 OnPropertyChanged();
             }
@@ -54,21 +57,17 @@ namespace CricketScorer
         {
             get
             {
-                if (_runsScoredCommand == null)
+                return _runsScoredCommand ??= new SimpleDelegateCommand(prm =>
                 {
-                    _runsScoredCommand = new SimpleDelegateCommand((prm) =>
+                    if (CurrentMatch == null)
                     {
-                        if (CurrentMatch == null)
-                        {
-                            Trace.TraceError("Match is still null. Start a match before attempting to add runs.");
-                            return;
-                        }
+                        Trace.TraceError("Match is still null. Start a match before attempting to add runs.");
+                        return;
+                    }
 
-                        object[] args = (object[]) prm;
-                        ProposedBall = SetRunsScored((int) args[0], (RunType) args[1]);
-                    });
-                }
-                return _runsScoredCommand;
+                    object[] args = (object[]) prm;
+                    ProposedBall = SetRunsScored((int) args[0], (RunType) args[1]);
+                });
             }
         }
 
@@ -77,26 +76,23 @@ namespace CricketScorer
         {
             get
             {
-                if (_outCommand == null)
+                return _outCommand ??= new SimpleDelegateCommand((prm) =>
                 {
-                    _outCommand = new SimpleDelegateCommand((prm) =>
+                    if (CurrentMatch == null)
                     {
-                        if (CurrentMatch == null)
-                        {
-                            Trace.TraceError("Match is still null. Start a match before attempting to add outs.");
-                            return;
-                        }
+                        Trace.TraceError("Match is still null. Start a match before attempting to add outs.");
+                        return;
+                    }
 
-                        if (AcceptBall() != null)
-                        {
-                            ProposedBall = null;
-                        } else
-                        {
-                            Trace.TraceError("Failed to add new ball : " + ProposedBall);
-                        }
-                    });
-                }
-                return _outCommand;
+                    if (AcceptBall() != null)
+                    {
+                        ProposedBall = null;
+                    }
+                    else
+                    {
+                        Trace.TraceError("Failed to add new ball : " + ProposedBall);
+                    }
+                });
             }
         }
 
@@ -105,23 +101,18 @@ namespace CricketScorer
         {
             get
             {
-                if (_runsShortCommand == null)
+                return _runsShortCommand ??= new SimpleDelegateCommand((prm) =>
                 {
-                    _runsShortCommand = new SimpleDelegateCommand((prm) =>
+                    if (CurrentMatch == null)
                     {
-                        if (CurrentMatch == null)
-                        {
-                            Trace.TraceError("Match is still null. Start a match before attempting to add runs short.");
-                        }
+                        Trace.TraceError("Match is still null. Start a match before attempting to add runs short.");
+                    }
 
-                        if (int.TryParse((string)prm, out int result))
-                        {
-                            RunsShort(result);
-                            OnPropertyChanged(nameof(ProposedBall));
-                        }
-                    });
-                }
-                return _runsShortCommand;
+                    if (!int.TryParse((string) prm, out int result)) return;
+
+                    RunsShort(result);
+                    OnPropertyChanged(nameof(ProposedBall));
+                });
             }
         }
 
@@ -130,17 +121,64 @@ namespace CricketScorer
         {
             get
             {
-                if (_clearCommand == null)
+                return _clearCommand ??= new SimpleDelegateCommand((prm) =>
                 {
-                    _clearCommand = new SimpleDelegateCommand((prm) =>
-                    {
-                        Trace.WriteLine("Clearing ball.");
-                        ProposedBall = null;
-                    });
-                }
-                return _clearCommand;
+                    Trace.WriteLine("Clearing ball.");
+                    ProposedBall = null;
+                });
             }
         }
+
+        private ICommand _newMatchCommand;
+        public ICommand NewMatchCommand
+        {
+            get
+            {
+                return _newMatchCommand ??= new SimpleDelegateCommand((prm) =>
+                {
+                    Trace.WriteLine("New game.");
+                });
+            }
+        }
+
+        private ICommand _loadMatchCommand;
+        public ICommand LoadMatchCommand
+        {
+            get
+            {
+                return _loadMatchCommand ??= new SimpleDelegateCommand((prm) =>
+                {
+                    Trace.WriteLine("Load game.");
+                });
+            }
+        }
+
+        private ICommand _QuitCommand;
+        public ICommand QuitCommand
+        {
+            get
+            {
+                return _loadMatchCommand ??= new SimpleDelegateCommand((prm) =>
+                {
+                    Trace.WriteLine("Quit.");
+                    Environment.Exit(0);
+                });
+            }
+        }
+
+        private ICommand _aboutCommand;
+        public ICommand AboutCommand
+        {
+            get
+            {
+                return _aboutCommand ??= new SimpleDelegateCommand((prm) =>
+                {
+                    Trace.WriteLine("About.");
+                });
+            }
+        }
+
+        #endregion
 
         public Ball AcceptBall()
         {
@@ -194,7 +232,6 @@ namespace CricketScorer
 
         public void StartNewGame() { }
 
-        #endregion
     }
 
     public class Match : Base
@@ -445,6 +482,24 @@ namespace CricketScorer
 
         public Ball CurrentBall => BallsInOver.Count > 0 ? BallsInOver[BallCount - 1] : null;
 
+        public int TotalOuts => BallsInOver.Count(b => b.BatsmanOut != null);
+
+        public int TotalRunsScored
+        {
+            get
+            {
+                var totalRunsScored = BallsInOver.Sum(b => b.RunsScored.RunCount);
+                var totalRunsShort = BallsInOver.Where(b => b.RunsScored.RunCount > 0).Sum(b => b.RunsScored.RunsShort);
+                
+                // If somehow there's no runs scored but the umpire has signalled runs short then return 0
+                if (totalRunsScored == 0 && totalRunsShort > 0)
+                    return 0;
+
+                // Otherwise return the number of runs scored in the over
+                return totalRunsScored - (totalRunsShort ?? 0);
+            }
+        }
+
         public Ball addBall(Ball toAdd)
         {
             if (toAdd == null)
@@ -460,6 +515,7 @@ namespace CricketScorer
 
     public class Ball : Base, INotifyPropertyChanged
     {
+        public int BallIndex { get; set; }
         public Player Striker { get; set; }
         public Player NonStriker { get; set; }
         public DateTime BallDateTime => Created;
@@ -485,6 +541,11 @@ namespace CricketScorer
             return Striker + " " 
                 + RunsScored.RunCount + " " + RunsScored.RunType 
                 + (RunsScored?.RunsShort > 0 ? "/" + RunsScored.RunsShort + " short" : "");
+        }
+
+        public string GetBallSymbol()
+        {
+            return null;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

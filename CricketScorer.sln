@@ -3,7 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29424.173
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CricketScorer", "CricketScorer\CricketScorer.csproj", "{73842FCB-59D6-4C2B-9A14-23E68FC9F04E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CricketScorer", "CricketScorer\CricketScorer.csproj", "{73842FCB-59D6-4C2B-9A14-23E68FC9F04E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F2A79203-845C-4044-AD47-D59073B7957E}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CricketScorer"
         xmlns:system="clr-namespace:System;assembly=System.Runtime"
+        xmlns:converters="clr-namespace:CricketScorer.Converters"
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="1024">
     <Window.DataContext>
@@ -22,37 +23,69 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
+        <Grid.Resources>
+            <converters:MultiTextConverter x:Key="Mtc" />
+            <converters:BallTextConverter x:Key="Btc" />
+            <converters:OversToSymbolConverter x:Key="Otsc" />
+        </Grid.Resources>
+
         <Menu Grid.Row="0" Grid.ColumnSpan="2">
             <MenuItem Header="File">
-                <MenuItem Header="Save" />
-                <MenuItem Header="Load" />
+                <MenuItem Header="Save" Command="{Binding NewMatchCommand}" />
+                <MenuItem Header="Load" Command="{Binding LoadMatchCommand}" />
                 <Separator />
-                <MenuItem Header="Quit" />
+                <MenuItem Header="Quit" Command="{Binding QuitCommand}"/>
             </MenuItem>
             <MenuItem Header="Help">
-                <MenuItem Header="About" />
+                <MenuItem Header="About" Command="{Binding AboutCommand}" />
             </MenuItem>
         </Menu>
 
         <TextBlock Grid.Column="0" Grid.Row="1" Text="Jack's Crap Cricket Scorer" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="36" />
 
         <!-- Left hand side ball display -->
-        <TreeView Grid.Row="2" Grid.Column="0" Background="LightBlue">
-            <TreeView.Resources>
-                <HierarchicalDataTemplate ItemsSource="{Binding CurrentMatch}" DataType="{x:Type local:Match}">
-                    <TreeViewItem>
-                        <TreeViewItem.Header>
-                            <MultiBinding StringFormat="{} vs {} at {} on {}.">
-                                <Binding Path="{Binding HomeTeam}" />
-                                <Binding Path="{Binding AwayTeam}" />
-                                <Binding Path="{Binding Location}" />
-                                <Binding Path="{Binding MatchStartDate.Date}" />
-                            </MultiBinding>
-                        </TreeViewItem.Header>
-                    </TreeViewItem>
-                </HierarchicalDataTemplate>
-            </TreeView.Resources>
-        </TreeView>
+        <TabControl Grid.Row="2" Grid.Column="0">
+            <TabItem Header="Tree">
+                <TreeView Background="LightBlue"
+                          ItemsSource="{Binding CurrentMatch, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}">
+                    <TreeView.Resources>
+                        <HierarchicalDataTemplate DataType="{x:Type local:Innings}" ItemsSource="{Binding Overs}">
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding Converter="{StaticResource Mtc}" Mode="OneWay">
+                                        <Binding Source="Innings of" />
+                                        <Binding Path="{Binding BattingTeam.TeamName}" />
+                                        <Binding Source="innings #" />
+                                        <Binding Path="{Binding InningsNumber}" />
+                                        <Binding Source="against" />
+                                        <Binding Path="{Binding FieldingTeam.TeamName}" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </HierarchicalDataTemplate>
+                        <HierarchicalDataTemplate DataType="{x:Type local:Over}" ItemsSource="{Binding BallsInOver}">
+                            <TextBlock>
+                                <TextBlock.Text>
+                                    <MultiBinding Converter="{StaticResource Mtc}" Mode="OneWay">
+                                        <Binding Source="Over #" />
+                                        <Binding Path="{Binding OverNumber}" />
+                                        <Binding Source="," />
+                                        <Binding Path="{Binding TotalOuts}" />
+                                        <Binding Source="/" />
+                                        <Binding Path="{Binding TotalRunsScored}" />
+                                        <Binding Source="=>" />
+                                        <Binding Path="BallsInOver" Mode="OneWay" UpdateSourceTrigger="PropertyChanged" Converter="{StaticResource Otsc}" />
+                                    </MultiBinding>
+                                </TextBlock.Text>
+                            </TextBlock>
+                        </HierarchicalDataTemplate>
+                    </TreeView.Resources>
+                </TreeView>
+            </TabItem>
+            <TabItem Header="Batting" />
+            <TabItem Header="Scoring" />
+            <TabItem Header="Bowling" />
+        </TabControl>
 
         <!-- Right hand side run scoring etc -->
         <Rectangle Grid.Column="1" Grid.Row="2" Fill="LightYellow" />
