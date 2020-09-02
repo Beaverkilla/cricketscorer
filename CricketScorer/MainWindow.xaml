@@ -1,0 +1,408 @@
+﻿<Window x:Class="CricketScorer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CricketScorer"
+        xmlns:system="clr-namespace:System;assembly=System.Runtime"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="600" Width="1024">
+    <Window.DataContext>
+        <local:MainViewModel />
+    </Window.DataContext>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="300" />
+        </Grid.ColumnDefinitions>
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="50" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Menu Grid.Row="0" Grid.ColumnSpan="2">
+            <MenuItem Header="File">
+                <MenuItem Header="Save" />
+                <MenuItem Header="Load" />
+                <Separator />
+                <MenuItem Header="Quit" />
+            </MenuItem>
+            <MenuItem Header="Help">
+                <MenuItem Header="About" />
+            </MenuItem>
+        </Menu>
+
+        <TextBlock Grid.Column="0" Grid.Row="1" Text="Jack's Crap Cricket Scorer" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="36" />
+
+        <!-- Left hand side ball display -->
+        <TreeView Grid.Row="2" Grid.Column="0" Background="LightBlue">
+            <TreeView.Resources>
+                <HierarchicalDataTemplate ItemsSource="{Binding CurrentMatch}" DataType="{x:Type local:Match}">
+                    <TreeViewItem>
+                        <TreeViewItem.Header>
+                            <MultiBinding StringFormat="{} vs {} at {} on {}.">
+                                <Binding Path="{Binding HomeTeam}" />
+                                <Binding Path="{Binding AwayTeam}" />
+                                <Binding Path="{Binding Location}" />
+                                <Binding Path="{Binding MatchStartDate.Date}" />
+                            </MultiBinding>
+                        </TreeViewItem.Header>
+                    </TreeViewItem>
+                </HierarchicalDataTemplate>
+            </TreeView.Resources>
+        </TreeView>
+
+        <!-- Right hand side run scoring etc -->
+        <Rectangle Grid.Column="1" Grid.Row="2" Fill="LightYellow" />
+
+        <TextBlock Grid.Column="1" Grid.Row="1" Text="Game Control" HorizontalAlignment="Center" VerticalAlignment="Bottom" />
+
+        <Grid Grid.Column="1" Grid.Row="2" Name="ControlGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <!-- Scoring Runs -->
+
+                <RowDefinition Height="Auto" />
+                <!-- Runs -->
+                <RowDefinition Height="Auto" />
+                <!-- Byes -->
+                <RowDefinition Height="Auto" />
+                <!-- Leg Byes -->
+                <RowDefinition Height="Auto" />
+                <!-- Wides -->
+                <RowDefinition Height="Auto" />
+                <!-- No Balls -->
+                <RowDefinition Height="Auto" />
+                
+                <!-- Short/Minus -->
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+
+                <!-- Out -->
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                
+                <!-- Ball Control -->
+                <RowDefinition Height="1*" />
+
+                <!-- Over -->
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Column="0" Grid.Row="0" Grid.ColumnSpan="7" HorizontalAlignment="Center" Text="Scoring Runs" />
+
+            <!-- Runs -->
+            <TextBlock Grid.Column="0" Grid.Row="1" Margin="5" Text="Runs" />
+            <Button Grid.Column="1" Grid.Row="1" Content="1" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>1</system:Int32>
+                        <local:RunType>Batted</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="2" Grid.Row="1" Content="2" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>2</system:Int32>
+                        <local:RunType>Batted</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="3" Grid.Row="1" Content="3" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>3</system:Int32>
+                        <local:RunType>Batted</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="4" Grid.Row="1" Content="4" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>4</system:Int32>
+                        <local:RunType>Batted</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="5" Grid.Row="1" Content="5" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>5</system:Int32>
+                        <local:RunType>Batted</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="6" Grid.Row="1" Content="6" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>6</system:Int32>
+                        <local:RunType>Batted</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+
+            <!-- Byes -->
+            <TextBlock Grid.Column="0" Grid.Row="2" Margin="5" Text="Byes" />
+            <Button Grid.Column="1" Grid.Row="2" Content="1" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>1</system:Int32>
+                        <local:RunType>Byes</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="2" Grid.Row="2" Content="2" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>2</system:Int32>
+                        <local:RunType>Byes</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="3" Grid.Row="2" Content="3" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>3</system:Int32>
+                        <local:RunType>Byes</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="4" Grid.Row="2" Content="4" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>4</system:Int32>
+                        <local:RunType>Byes</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="5" Grid.Row="2" Content="5" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>5</system:Int32>
+                        <local:RunType>Byes</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="6" Grid.Row="2" Content="6" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>6</system:Int32>
+                        <local:RunType>Byes</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+
+            <!-- Leg Byes -->
+            <TextBlock Grid.Column="0" Grid.Row="3" Margin="5" Text="Leg Byes" />
+            <Button Grid.Column="1" Grid.Row="3" Content="1" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>1</system:Int32>
+                        <local:RunType>LegByes</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="2" Grid.Row="3" Content="2" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>2</system:Int32>
+                        <local:RunType>LegByes</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="3" Grid.Row="3" Content="3" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>3</system:Int32>
+                        <local:RunType>LegByes</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="4" Grid.Row="3" Content="4" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>4</system:Int32>
+                        <local:RunType>LegByes</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="5" Grid.Row="3" Content="5" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>5</system:Int32>
+                        <local:RunType>LegByes</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="6" Grid.Row="3" Content="6" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>6</system:Int32>
+                        <local:RunType>LegByes</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+
+            <!-- Wides -->
+            <TextBlock Grid.Column="0" Grid.Row="4" Margin="5" Text="Wides" />
+            <Button Grid.Column="1" Grid.Row="4" Content="1" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>1</system:Int32>
+                        <local:RunType>Wides</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="2" Grid.Row="4" Content="2" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>2</system:Int32>
+                        <local:RunType>Wides</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="3" Grid.Row="4" Content="3" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>3</system:Int32>
+                        <local:RunType>Wides</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="4" Grid.Row="4" Content="4" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>4</system:Int32>
+                        <local:RunType>Wides</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="5" Grid.Row="4" Content="5" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>5</system:Int32>
+                        <local:RunType>Wides</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="6" Grid.Row="4" Content="6" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>6</system:Int32>
+                        <local:RunType>Wides</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+
+            <!-- No Balls -->
+            <TextBlock Grid.Column="0" Grid.Row="5" Margin="5" Text="No Balls" />
+            <Button Grid.Column="1" Grid.Row="5" Content="1" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>1</system:Int32>
+                        <local:RunType>NoBalls</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="2" Grid.Row="5" Content="2" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>2</system:Int32>
+                        <local:RunType>NoBalls</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="3" Grid.Row="5" Content="3" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>3</system:Int32>
+                        <local:RunType>NoBalls</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="4" Grid.Row="5" Content="4" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>4</system:Int32>
+                        <local:RunType>NoBalls</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="5" Grid.Row="5" Content="5" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>5</system:Int32>
+                        <local:RunType>NoBalls</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+            <Button Grid.Column="6" Grid.Row="5" Content="6" Command="{Binding RunsScoredCommand}">
+                <Button.CommandParameter>
+                    <x:Array Type="system:Object">
+                        <system:Int32>6</system:Int32>
+                        <local:RunType>NoBalls</local:RunType>
+                    </x:Array>
+                </Button.CommandParameter>
+            </Button>
+
+            <!-- Short/Minus -->
+            <TextBlock Grid.Column="0" Grid.Row="6" Grid.ColumnSpan="7" HorizontalAlignment="Center" Text="Short/Minus" />
+            <TextBlock Grid.Column="0" Grid.Row="7" Margin="5" Text="Minus" />
+            <Button Grid.Column="1" Grid.Row="7" Content="1" Command="{Binding RunsShortCommand}" CommandParameter="1" />
+            <Button Grid.Column="2" Grid.Row="7" Content="2" Command="{Binding RunsShortCommand}" CommandParameter="2" />
+            <Button Grid.Column="3" Grid.Row="7" Content="3" Command="{Binding RunsShortCommand}" CommandParameter="3" />
+            <Button Grid.Column="4" Grid.Row="7" Content="4" Command="{Binding RunsShortCommand}" CommandParameter="4" />
+            <Button Grid.Column="5" Grid.Row="7" Content="5" Command="{Binding RunsShortCommand}" CommandParameter="5" />
+            <Button Grid.Column="6" Grid.Row="7" Content="6" Command="{Binding RunsShortCommand}" CommandParameter="6" />
+
+            <!-- Batsman Out -->
+            <TextBlock Grid.Column="0" Grid.Row="8" Grid.ColumnSpan="7" HorizontalAlignment="Center" Text="Batsman Out" />
+            <TextBlock Grid.Column="0" Grid.Row="9" Text="How Out" Margin="5" />
+            <Button Grid.Column="1" Grid.Row="9" Content="BOW" ToolTip="Bowled" />
+            <Button Grid.Column="2" Grid.Row="9" Content="LBW" ToolTip="Leg Before Wicket" />
+            <Button Grid.Column="3" Grid.Row="9" Content="C&amp;B" ToolTip="Caught And Bowled" />
+            <Button Grid.Column="4" Grid.Row="9" Content="CAU" ToolTip="Caught Out" />
+            <Button Grid.Column="5" Grid.Row="9" Content="CB" ToolTip="Caught Behind" />
+            <Button Grid.Column="6" Grid.Row="9" Content="STU" ToolTip="Stumped Out" />
+
+            <TextBlock Grid.Column="0" Grid.Row="10" Text="How Out" Margin="5" />
+            <Button Grid.Column="1" Grid.Row="10" Content="RO" ToolTip="Run Out" />
+            <Button Grid.Column="2" Grid.Row="10" Content="HW" ToolTip="Hit Wicket" />
+            <Button Grid.Column="3" Grid.Row="10" Content="HB2" ToolTip="Hit Ball Twice" />
+            <Button Grid.Column="4" Grid.Row="10" Content="OBS" ToolTip="Obstructing Field" />
+            <Button Grid.Column="5" Grid.Row="10" Content="TO" ToolTip="Timed Out" />
+            <Button Grid.Column="6" Grid.Row="10" Content="RET" ToolTip="Retired" />
+
+            <!-- Ball Control -->
+            <Button Grid.Column="0" Grid.Row="11" Grid.ColumnSpan="4" Height="100"
+                    Content="{Binding ProposedBall, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}"
+                    ToolTip="Click to accept ball"
+                    Command="{Binding OutCommand}" />
+            <Button Grid.Column="4" Grid.Row="11" Grid.ColumnSpan="3" Content="Clear Ball" ToolTip="Clear ball"
+                    Command="{Binding ClearCommand}" />
+
+            <!-- Over Control -->
+            <TextBlock Grid.Column="0" Grid.Row="13" Grid.ColumnSpan="7" HorizontalAlignment="Center" Text="Over Control" />
+            <Button Grid.Column="0" Grid.Row="14" Grid.ColumnSpan="7" Height="100" Content="Call Over" ToolTip="Call Over" />
+            
+            <Button Grid.Column="5" Grid.Row="14" Grid.ColumnSpan="2" Height="50" VerticalAlignment="Bottom" Content="New Bowler" />
+            
+        </Grid>
+    </Grid>
+</Window>
